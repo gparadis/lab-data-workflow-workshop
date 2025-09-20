@@ -18,6 +18,8 @@ in an LXD container on `fresh01` so everyone starts from the same baseline.
 
 ## Quickstart (in the shared dev container)
 
+Set up environment.
+
 ```bash
 # 1) Clone this repository
 git clone https://github.com/UBC-FRESH/lab-data-workflow-workshop
@@ -28,17 +30,14 @@ cd lab-data-workflow-workshop
 
 # 3) Configure your Git identity (once)
 ./setup/config_git_user.sh
-
-# 4) Run the Git‑only lab
-code --install-extension ms-python.python >/dev/null 2>&1 || true
-python3 demo_dataset/code/process_data.py --input demo_dataset/data/input.csv --out demo_dataset/outputs/processed.csv
-git add -A
-git commit -m "Run pipeline once and capture outputs"
 ```
+
+Follow `workflows/01_git_only.md` to run a git-only workflow to work through what a basic (no DataLad) workflow looks like.
 
 ### Optional: configure S3 (Arbutus) for DataLad
 1) Copy and edit `setup/s3_config_template.sh` (do **not** commit secrets!)
 2) Follow `arbutus_s3/datalad_s3_setup.md` to add an S3 special‑remote for annexed data.
+3) Follow `workflows/02_git_datalad_local.md` and `workflows/03_git_datalad_s3.md` to work through what the workflow looks like just using local DataLad (git annex) file storage and Arbutus S3 bucket special remote (git annex) files storage. 
 
 ## Repo licensing
 

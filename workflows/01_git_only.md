@@ -6,8 +6,12 @@
 
 ## Steps
 
+First fork the original `UBC-FRESH/lab-data-workflow-workshop` repo to your own GitHub account so you have full push/pull permissions and can experiment without making a mess in the original repo.
+
+https://github.com/UBC-FRESH/lab-data-workflow-workshop
+
 ```bash
-# 1) Clone your instructor’s repo
+# 1) Clone your forked repo
 git clone <YOUR_GITHUB_REPO_URL> lab-data-workflow-workshop
 cd lab-data-workflow-workshop
 
