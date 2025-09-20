@@ -34,13 +34,31 @@ Replace placeholders with your values:
 
 ```bash
 REMOTE_NAME="s3-storage"
-BUCKET="my-workshop-bucket"
+BUCKET="my-workshop-bucket"        # note that bucket names must be unique across the entire Arbutus system 
 ENDPOINT="${S3_ENDPOINT_URL}"      # export via setup/s3_config.sh
 REGION="${AWS_DEFAULT_REGION}"     # export via setup/s3_config.sh
 
 # Create an annex special remote using datalad-next (wraps git-annex initremote)
 datalad -f json run-procedure cfg_s3   || true  # harmless if missing
-git annex initremote "$REMOTE_NAME" type=S3     encryption=none     bucket="$BUCKET"     host="${ENDPOINT}"     public=no     fileprefix="annex/${USER}/demo"     datacenter="$REGION"     chunk=50MiB     partsize=50MiB     autoenable=true     importtree=no
+git annex initremote "$REMOTE_NAME" \
+  type=S3 \
+  encryption=none \
+  bucket="$BUCKET" \
+  host="${ENDPOINT}" \    
+  public=yes \
+  publicurl="$ENDPOINT/$BUCKET"
+  fileprefix="annex/${USER}/demo"     datacenter="$REGION"     chunk=50MiB     partsize=50MiB     autoenable=true     importtree=no
+
+git annex initremote arbutus-s3 \
+  type=S3 \
+  encryption=none \
+  bucket=ubc-fresh-my-dataset \
+  public=yes \
+  publicurl=https://object-arbutus.cloud.computecanada.ca/ubc-fresh-my-dataset \
+  host=object-arbutus.cloud.computecanada.ca \
+  protocol=https \
+  requeststyle=path \
+  autoenable=true
 ```
 
 > Notes:

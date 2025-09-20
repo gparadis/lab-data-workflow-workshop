@@ -3,11 +3,11 @@ set -euo pipefail
 
 echo "[*] Updating apt and installing system packages..."
 sudo apt-get update -y
-sudo apt-get install -y git git-annex datalad python3-pip s3fs awscli
+sudo apt-get install -y git git-annex python3-pip s3fs
 
 echo "[*] Installing Python packages..."
 python3 -m pip install --upgrade pip
-python3 -m pip install pandas boto3 datalad-next
+python3 -m pip install pandas boto3 datalad[full] awscli datalad-next
 
 echo "[*] Versions:"
 git --version || true

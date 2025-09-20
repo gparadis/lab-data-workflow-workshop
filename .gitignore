@@ -1,1 +1,5 @@
+# omit the codeserer Python extension default local Python virtual environment name 
 .venv/
+
+# omit the s3_config shell script from git commit scope, because it contains AWS secret values
+setup/s3_config.sh

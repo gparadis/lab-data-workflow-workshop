@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-# Copy this to s3_config.sh and fill in, then: `source setup/s3_config.sh` (do NOT commit it).
+# Copy this to s3_config.sh and fill in, edit to add missing AWS access key ID and secret access key, 
+# and then `source setup/s3_config.sh`.
+# Do NOT commit it--root .gitignore configured to ignore that filename so should be safe[ish] from commit).
 
-export AWS_ACCESS_KEY_ID="YOUR_KEY_ID"
-export AWS_SECRET_ACCESS_KEY="YOUR_SECRET_KEY"
-export AWS_DEFAULT_REGION="YOUR_REGION"           # e.g., ca-central-1 (or as required by your endpoint)
-export S3_ENDPOINT_URL="https://YOUR-ARBUTUS-ENDPOINT"  # e.g., https://object.arbutus.cloud
+export AWS_ACCESS_KEY_ID="YOUR_KEY_ID"                                  # from output of `openstack ec2 credentials create`, or provided by Arbutus project admininstrator
+export AWS_SECRET_ACCESS_KEY="YOUR_SECRET_KEY"                          # from output of `openstack ec2 credentials create`, or provided by Arbutus project admininstrator
+export AWS_DEFAULT_REGION="ca-west-1"                                   # do not modify this unless you are sure that you know what you are doing
+export S3_ENDPOINT_URL="https://object-arbutus.cloud.computecanada.ca"  # do not modify this unless you are sure that you know what you are doing
 
 # For awscli and libraries honoring AWS_* variables:
 export AWS_EC2_METADATA_DISABLED=true
