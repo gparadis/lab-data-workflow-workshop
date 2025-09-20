@@ -1,7 +1,10 @@
 # Example: annex large files; keep small text files in Git
 * annex.largefiles=(largerthan=1kb)
 
-# Always keep code and small CSVs in Git
+# Always keep code and small input CSVs in Git
 *.py annex.largefiles=nothing
 *.md annex.largefiles=nothing
 *.csv annex.largefiles=nothing
+
+# Always annex output files just so we have something to push to the S3 bucket 
+outputs/** annex.largefiles=anything

@@ -14,18 +14,19 @@ lives on GitHub. This is the recommended pattern for reproducible data.
 If starting fresh (inside this repository):
 
 ```bash
-cd demo_dataset
-datalad create -c text2git  # initializes DataLad in this directory
-# (This repo already contains small text in Git; large files go to annex)
+cp -r demo_dataset demo_dataset_datalad_s3
+cd demo_dataset_datalad_s3
+rm output/*
+datalad create --force -c text2git  # initializes DataLad in this directory
 ```
 
-If the dataset already exists, `cd` into it.
-
-## 2) Save the current state
+## 2) Generate some fresh output and save the current state
 
 ```bash
+datalad run -m "process data v1" "python3 code/process_data.py --input data/input.csv --out outputs/processed.csv"
 datalad status
 datalad save -m "Initial dataset state"
+datalad status
 ```
 
 ## 3) Create S3 special remote
@@ -33,32 +34,33 @@ datalad save -m "Initial dataset state"
 Replace placeholders with your values:
 
 ```bash
-REMOTE_NAME="s3-storage"
-BUCKET="my-workshop-bucket"        # note that bucket names must be unique across the entire Arbutus system 
+REMOTE_NAME="arbutus-s3"
+BUCKET="${S3_BUCKET_NAME}"         # export via setup/s3_config.sh
 ENDPOINT="${S3_ENDPOINT_URL}"      # export via setup/s3_config.sh
 REGION="${AWS_DEFAULT_REGION}"     # export via setup/s3_config.sh
 
 # Create an annex special remote using datalad-next (wraps git-annex initremote)
-datalad -f json run-procedure cfg_s3   || true  # harmless if missing
 git annex initremote "$REMOTE_NAME" \
   type=S3 \
   encryption=none \
   bucket="$BUCKET" \
-  host="${ENDPOINT}" \    
+  host="${ENDPOINT}" \
   public=yes \
-  publicurl="$ENDPOINT/$BUCKET"
-  fileprefix="annex/${USER}/demo"     datacenter="$REGION"     chunk=50MiB     partsize=50MiB     autoenable=true     importtree=no
-
-git annex initremote arbutus-s3 \
-  type=S3 \
-  encryption=none \
-  bucket=ubc-fresh-my-dataset \
-  public=yes \
-  publicurl=https://object-arbutus.cloud.computecanada.ca/ubc-fresh-my-dataset \
+  publicurl="$ENDPOINT/$BUCKET" \
   host=object-arbutus.cloud.computecanada.ca \
   protocol=https \
   requeststyle=path \
   autoenable=true
+
+# Create a GitHub repo in the GitHub organization (or user account) you set in setup/s3_config.sh and wire it up as 'origin'
+datalad create-sibling-github -d . \
+  --github-organization "${GITHUB_ORGANIZATION}" \
+  --name origin \
+  --publish-depends arbutus-s3 \
+  lab_data_workflow_workshop_demo_dataset_datalad_s3
+
+# verify siblings
+datalad siblings
 ```
 
 > Notes:
@@ -71,8 +73,8 @@ git annex initremote arbutus-s3 \
 # Ensure GitHub remote 'origin' exists for the Git history (code & metadata).
 git remote -v
 
-# Push annexed file content to S3:
-datalad push --to "$REMOTE_NAME"
+# push Git history to GitHub, annex files automatically pushed to S3 sibling due to publish-depends
+datalad push --to origin
 ```
 
 ## 5) Test on a fresh clone
