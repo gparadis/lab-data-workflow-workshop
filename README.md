@@ -24,9 +24,11 @@ https://github.com/UBC-FRESH/lab-data-workflow-workshop
 
 Next, log into the codeserver (i.e., VSCode) interface in your dev container and set up the environment using the steps below.
 
+Use the VSCode GitHub integration to clone the forked repo if you are working in a VSCode interface (simpler and cleaner).
+
 ```bash
-# 0) Clone your forked repo
-git clone <YOUR_GITHUB_REPO_URL> lab-data-workflow-workshop
+# 0) Clone your forked repo 
+git clone <YOUR_GITHUB_REPO_URL> lab-data-workflow-workshop # use the VSCode GitHub integration instead if available
 cd lab-data-workflow-workshop
 
 # 1) Install tools (idempotent; safe to re-run; assumes your has sudo privileges inside your dev container)
