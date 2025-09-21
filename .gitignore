@@ -2,6 +2,6 @@
 .venv/
 
 # omit the s3_config shell script from git commit scope, because it contains AWS secret values
-setup/s3_config.sh
+setup/datalad_config.sh
 
 def-gep-dev-openrc.sh
