@@ -9,8 +9,8 @@
 
 ```bash
 # 0) Make a copy of demo_dataset that is not already tracked by git and delete any files in output subdirectory
-cp -r demo_dataset demo_dataset_datalad_local
-cd demo_dataset_datalad_local
+cp -r demo_dataset _demo_dataset_datalad_local
+cd _demo_dataset_datalad_local
 rm output/*
 
 # 1) Initialize DataLad repo and save (anologous to git commit)

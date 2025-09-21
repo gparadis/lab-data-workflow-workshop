@@ -9,6 +9,7 @@ export AWS_DEFAULT_REGION="ca-west-1"                                   # do not
 export S3_ENDPOINT_URL="https://object-arbutus.cloud.computecanada.ca"  # do not modify this unless you are sure that you know what you are doing
 export S3_BUCKET_NAME="UNIQUE_BUCKET_NAME"                              # bucket name must be unique within endpoint namespace
 export GITHUB_ORGANIZATION="YOUR_GITHUB_ORGANIZATION_OR_USERNAME"       # modify this to match your situation
+export GITHUB_REPO_NAME="UNIQUE_REPO_NAME"                      # repo name must be unique within the GitHub organization namespace
 
 # For awscli and libraries honoring AWS_* variables:
 export AWS_EC2_METADATA_DISABLED=true

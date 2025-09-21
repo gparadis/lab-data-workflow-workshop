@@ -34,13 +34,16 @@ datalad status
 Replace placeholders with your values:
 
 ```bash
-REMOTE_NAME="arbutus-s3"
+ORIGIN="origin"
+REMOTE="arbutus-s3"
 BUCKET="${S3_BUCKET_NAME}"         # export via setup/s3_config.sh
 ENDPOINT="${S3_ENDPOINT_URL}"      # export via setup/s3_config.sh
 REGION="${AWS_DEFAULT_REGION}"     # export via setup/s3_config.sh
+ORG="${GITHUB_ORGANIZATION}"       # export via setup/s3_config.sh
+REPO="${GITHUB_REPO_NAME}"         # export via setup/s3_config.sh
 
 # Create an annex special remote using datalad-next (wraps git-annex initremote)
-git annex initremote "$REMOTE_NAME" \
+git annex initremote "$REMOTE" \
   type=S3 \
   encryption=none \
   bucket="$BUCKET" \
@@ -54,10 +57,10 @@ git annex initremote "$REMOTE_NAME" \
 
 # Create a GitHub repo in the GitHub organization (or user account) you set in setup/s3_config.sh and wire it up as 'origin'
 datalad create-sibling-github -d . \
-  --github-organization "${GITHUB_ORGANIZATION}" \
+  --github-organization "$ORG" \
   --name origin \
-  --publish-depends arbutus-s3 \
-  lab_data_workflow_workshop_demo_dataset_datalad_s3
+  --publish-depends "$REMOTE" \
+  "$REPO"
 
 # verify siblings
 datalad siblings
@@ -74,16 +77,30 @@ datalad siblings
 git remote -v
 
 # push Git history to GitHub, annex files automatically pushed to S3 sibling due to publish-depends
-datalad push --to origin
+datalad push --to "$ORIGIN"
+cd ..
 ```
 
-## 5) Test on a fresh clone
+
+## 5) Add your new DataLad repo back into the workshop parent git repo as a git submodule
+
+```bash
+# set remote GitHub repo URL property on DataLad subdataset (the same one we just created) 
+datalad subdatasets --set-property url https://github.com/${ORG}/$(REPO).git demo_dataset_datalad_s3
+datalad save -m "Register subdataset GitHub URL for portable clones"
+
+# push the parent repo change
+git push || git push -u origin "$(git rev-parse --abbrev-ref HEAD)"
+```
+
+## 6) Test on a fresh clone
 
 - Clone the Git repo from GitHub (NOT from S3).
+- Run a git submodule update command to pull 
 - Inside the dataset directory, fetch file content on demand:
 
 ```bash
-datalad get demo_dataset/outputs/processed.csv
+datalad get 
 ```
 
 If content is available in S3, this will retrieve it via the special remote.
