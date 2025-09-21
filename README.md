@@ -2,42 +2,46 @@
 
 A one‑stop, clone‑and‑go repository for your workshop on **Git + DataLad + S3 (Arbutus)**.
 Designed to be used inside a shared CodeServer/VSCode environment on Ubuntu 24.04 running
-in an LXD container on `fresh01` so everyone starts from the same baseline.
-
-> **Workshop date:** TBD — Generated on 2025-09-19
+in an LXD container on `fresh01` so everyone starts from the same baseline. Should be runable
+other linux-based environments, but has not be tested outside of this specific
+target environment.
 
 ## What’s inside?
 
-- `setup/` — scripts to install requirements and configure Git & S3 creds
-- `demo_dataset/` — a tiny dataset + Python script to simulate a data pipeline
-- `arbutus_s3/` — S3 + DataLad special‑remote how‑tos (works with Arbutus S3)
+- `setup/` — scripts to install requirements and configure git + AWS S3 creds
+- `demo_dataset/` — a tiny dataset + Python script to simulate a data processing pipeline
+- `arbutus_s3/` — S3 + DataLad special‑remote how‑tos (works with Arbutus S3 object storage)
 - `workflows/` — step‑by‑step labs (Git only; DataLad local; DataLad + S3)
 - `handouts/` — printable cheat sheet
-- `slides/` — intro slides (Markdown)
+- `slides/` — intro slide bullet summary (Markdown)
 - `LICENSES/` — code under MIT; docs under CC BY 4.0
 
 ## Quickstart (in the shared dev container)
 
-Set up environment.
+First fork the original `UBC-FRESH/lab-data-workflow-workshop` repo to your own GitHub account so you have full push/pull permissions and can experiment without making a mess in the original repo.
+
+https://github.com/UBC-FRESH/lab-data-workflow-workshop
+
+Next, log into the codeserver (i.e., VSCode) interface in your dev container and set up the environment using the steps below.
 
 ```bash
-# 1) Clone this repository
-git clone https://github.com/UBC-FRESH/lab-data-workflow-workshop
+# 0) Clone your forked repo
+git clone <YOUR_GITHUB_REPO_URL> lab-data-workflow-workshop
 cd lab-data-workflow-workshop
 
-# 2) Install tools (idempotent; safe to re-run)
-./setup/install_datalad.sh
+# 1) Install tools (idempotent; safe to re-run; assumes your has sudo privileges inside your dev container)
+./setup/01_install_datalad.sh
 
-# 3) Configure your Git identity (once)
-./setup/config_git_user.sh
+# 3) Copy setup/02_datalad_config_template.sh to setup/02_datalad_config.sh, edit, and run
+cp setup/02_datalad_config_template.sh setup/02_datalad_config.sh
+# TO DO BEFORE RUNNING THE NEXT LINE: edit setup/02_datalad_config.sh (ask workshop leader for help if needed)
+source setup/02_datalad_config.sh
+
+# 3) Configure your Git identity and environment
+source setup/03_config_git_user.sh
 ```
 
-Follow `workflows/01_git_only.md` to run a git-only workflow to work through what a basic (no DataLad) workflow looks like.
-
-### Optional: configure S3 (Arbutus) for DataLad
-1) Copy and edit `setup/s3_config_template.sh` (do **not** commit secrets!)
-2) Follow `arbutus_s3/datalad_s3_setup.md` to add an S3 special‑remote for annexed data.
-3) Follow `workflows/02_git_datalad_local.md` and `workflows/03_git_datalad_s3.md` to work through what the workflow looks like just using local DataLad (git annex) file storage and Arbutus S3 bucket special remote (git annex) files storage. 
+Follow the instructions in `workflows/*.md` to run through various data management workflow scenarios (i.e., a git-only workflow, a git + DataLad workflow using only local object storage, a git + DataLad workflow using special remote S3 bucket object storage in an Arbutus cloud account, etc.).  
 
 ## Repo licensing
 
