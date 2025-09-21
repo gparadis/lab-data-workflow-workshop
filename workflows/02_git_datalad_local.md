@@ -8,18 +8,22 @@
 ## Steps
 
 ```bash
-# 0) Make a copy of demo_dataset that is not already tracked by git and delete any files in output subdirectory
-cp -r demo_dataset _demo_dataset_datalad_local
-cd _demo_dataset_datalad_local
-rm output/*
+# 0) Switch to main git branch and create a new feature branch
+git switch main
+git checkout -b feature/git-datalad-local-workflow
 
-# 1) Initialize DataLad repo and save (anologous to git commit)
-datalad create -c text2git
-datalad status
-datalad save "Initial dataset state"
-datalad status
+# 1) Initialize DataLad repo as a subdataset and save (anologous to git commit)
+git rm -r --cached demo_dataset
+git commit -m "Untrack demo_dataset in parent (retry for subdataset)"
+
+# after: git rm -r --cached demo_dataset && git commit -m "untrack …"
+datalad create -d . --force -c text2git demo_dataset
+
+# one recursive save does both:
+datalad save -r -m "Initialize subdataset with existing content and register in parent"
 
 # 2) Run the pipeline under DataLad control (records a command under a tag)
+cd demo_dataset
 datalad run -m "process data v1" "python3 code/process_data.py --input data/input.csv --out outputs/processed.csv"
 
 # 3) Verify status
@@ -45,4 +49,31 @@ datalad save -m "prep for v2: tweak code/input"
 
 # 9) Re-run the pipeline under DataLad control (records a second command under a different tag)
 datalad run -m "process data v2" "python3 code/process_data.py --input data/input.csv --out outputs/processed.csv"
+
+# 10) Back up to the parent root and run a run a DataLad save to update subdataset pointers and other metadata
+cd ..                      # back to parent repo root
+datalad status             # should show "modified: demo_dataset (dataset)"
+datalad save -m "demo_dataset: record v1/v2 runs (update subdataset pointer)"
+
+# 11) Make sure the subdataset has a GitHub sibling and is pushed
+cd demo_dataset
+
+# pick a repo name, then build the URL consistently
+REPO_NAME=demo_dataset
+GH_URL="https://github.com/${GH_OWNER}/${REPO_NAME}.git"
+
+# Create the sibling correctly for org vs user
+if [ -n "${GITHUB_ORGANIZATION:-}" ]; then
+  datalad create-sibling-github -d . --github-organization "$GH_OWNER" --name origin "$REPO_NAME"
+else
+  datalad create-sibling-github -d . --name origin "$REPO_NAME"
+fi
+
+# Push Git history (annex content still goes to S3 via publish-depends)
+datalad push --to origin
+
+# In the parent repo, register the subdataset URL so fresh clones work
+cd ..
+datalad subdatasets --set-property url "$GH_URL" demo_dataset
+datalad save -m "Register subdataset URL $GH_URL"
 ```

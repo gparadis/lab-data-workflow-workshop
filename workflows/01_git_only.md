@@ -11,19 +11,15 @@ First fork the original `UBC-FRESH/lab-data-workflow-workshop` repo to your own 
 https://github.com/UBC-FRESH/lab-data-workflow-workshop
 
 ```bash
-# 0) Clone your forked repo
+# 1) Clone your forked repo
 git clone <YOUR_GITHUB_REPO_URL> lab-data-workflow-workshop
 cd lab-data-workflow-workshop
 
-# 1) Configure your identity (first time only)
+# 2) Configure your identity (first time only)
 ./setup/config_git_user.sh
 
-# 2) Create a feature branch
+# 3) Create a feature branch
 git checkout -b feature/git-only-workflow
-
-# 3) Make a working copy of the demo dataset
-cp -r demo_dataset _demo_dataset_git_only
-cd _demo_dataset_git_only
 
 # 4) Run the demo pipeline
 python3 code/process_data.py --input data/input.csv --out outputs/processed.csv

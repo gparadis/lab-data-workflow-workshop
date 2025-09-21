@@ -40,7 +40,7 @@ BUCKET="${S3_BUCKET_NAME}"         # export via setup/s3_config.sh
 ENDPOINT="${S3_ENDPOINT_URL}"      # export via setup/s3_config.sh
 REGION="${AWS_DEFAULT_REGION}"     # export via setup/s3_config.sh
 ORG="${GITHUB_ORGANIZATION}"       # export via setup/s3_config.sh
-REPO="${GITHUB_REPO_NAME}"         # export via setup/s3_config.sh
+REPO="${GITHUB_REPO_NAME_S3}"      # export via setup/s3_config.sh
 
 # Create an annex special remote using datalad-next (wraps git-annex initremote)
 git annex initremote "$REMOTE" \

@@ -3,7 +3,7 @@ set -euo pipefail
 
 echo "[*] Updating apt and installing system packages..."
 sudo apt-get update -y
-sudo apt-get install -y git git-annex python3-pip s3fs
+sudo apt-get install -y git git-annex python3-pip s3fs gh
 
 echo "[*] Installing Python packages..."
 python3 -m pip install --upgrade pip
