@@ -19,7 +19,7 @@ cd lab-data-workflow-workshop
 ./setup/config_git_user.sh
 
 # 2) Create a feature branch
-git checkout -b feature/${USER}-tweak
+git checkout -b feature/git-only-workflow
 
 # 3) Make a working copy of the demo dataset
 cp -r demo_dataset _demo_dataset_git_only
