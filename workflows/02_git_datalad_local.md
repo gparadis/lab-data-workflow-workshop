@@ -77,3 +77,18 @@ cd ..
 datalad subdatasets --set-property url "$GH_URL" demo_dataset
 datalad save -m "Register subdataset URL $GH_URL"
 ```
+
+You can now try cloning your forked repo into a clean environment and syncing data with DataLad
+
+```bash
+# clone the parent
+git clone https://github.com/<acct>/lab-data-workflow-workshop.git
+cd lab-data-workflow-workshop
+
+# switch to feature branch
+git switch feature/git-datalad-local-workflow
+
+# DataLad-native install of subdatasets (no git submodule update needed)
+datalad get -n -r .
+datalad get -r .
+```

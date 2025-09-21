@@ -69,5 +69,5 @@ get_gh_owner() {
   return 1
 }
 
-GH_OWNER=$(get_gh_owner) || exit 1
+export GH_OWNER=$(get_gh_owner) || exit 1
 echo "GitHub owner resolved to: $GH_OWNER"
