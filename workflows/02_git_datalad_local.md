@@ -59,7 +59,7 @@ datalad save -m "demo_dataset: record v1/v2 runs (update subdataset pointer)"
 cd demo_dataset
 
 # pick a repo name, then build the URL consistently
-REPO_NAME=demo_dataset
+REPO_NAME=${GITHUB_REPO_NAME_LOCAL}
 GH_URL="https://github.com/${GH_OWNER}/${REPO_NAME}.git"
 
 # Create the sibling correctly for org vs user
