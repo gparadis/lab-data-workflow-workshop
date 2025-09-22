@@ -1,0 +1,5 @@
+[submodule "cccandies_demo_input"]
+	path = cccandies_demo_input
+	url = https://github.com/UBC-FRESH/cccandies_demo_input.git
+	datalad-id = 54122293-e9e9-442c-83e4-55ddc01501c0
+	datalad-url = https://github.com/UBC-FRESH/cccandies_demo_input.git
