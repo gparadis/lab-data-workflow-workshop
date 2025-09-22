@@ -5,5 +5,5 @@
 	datalad-url = https://github.com/UBC-FRESH/cccandies_demo_input.git
 [submodule "demo_dataset"]
 	path = demo_dataset
-	url = ./demo_dataset
+	url = https://github.com/gparadis/workshop20250922-gep-demo-dataset-local.git
 	datalad-id = 4996b3cb-f7c6-4be2-820b-98171c478d0e
