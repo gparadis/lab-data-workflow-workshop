@@ -129,7 +129,7 @@ datalad subdatasets --set-property url $GH_URL demo_dataset
 datalad save -m "Register subdataset GitHub URL for portable clones"
 
 # push the parent repo change
-git push || git push -u origin "$(git rev-parse --abbrev-ref HEAD)"
+datalad push --to origin
 ```
 
 ## 6) Test on a fresh clone
