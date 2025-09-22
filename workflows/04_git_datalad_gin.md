@@ -73,22 +73,7 @@ datalad rerun --script reproduce_v1.sh $RUN
 chmod +x reproduce_v1.sh
 ```
 
-### 8) Modify CSV input file and rerun pipeline
-
-Append a data row so the second run’s output differs. Save to keep a clean tree.
-
-```bash
-echo "f,6.0,3.5" >> data/input.csv
-datalad save -m "append new data row to data/input.csv"
-```
-
-Re-run with a new tag.
-
-```bash
-datalad run -m "process data v2" "python3 code/process_data.py --input data/input.csv --out outputs/processed.csv"
-```
-
-### 10) Back up to the parent and save updated subdataset pointer
+### 9) Back up to the parent and save updated subdataset pointer
 
 ```bash
 cd ..                      # back to parent repo root
@@ -96,7 +81,7 @@ datalad status             # should show "modified: demo_dataset (dataset)"
 datalad save -m "demo_dataset: record v1/v2 runs (update subdataset pointer)"
 ```
 
-### 11) Create a GIN sibling for both Git and annex content, then push
+### 10) Create a GIN sibling for both Git and annex content, then push
 
 GIN siblings provide both:
 - A Git remote for history/metadata ("gin").
@@ -105,16 +90,11 @@ GIN siblings provide both:
 Create the sibling, configure push dependencies, and push.
 
 ```bash
-cd demo_dataset
-
 # Choose a unique repo name under your GIN account
 REPO_NAME="demo-dataset-gin"
 
 # Create the GIN sibling (SSH recommended). This creates two siblings: `gin` and `gin-storage`.
 datalad create-sibling-gin -d . --name gin "$REPO_NAME"
-
-# Make `datalad push --to gin` also publish annex content to `gin-storage`
-datalad siblings configure -s gin --publish-depends gin-storage
 
 # Verify siblings
 datalad siblings

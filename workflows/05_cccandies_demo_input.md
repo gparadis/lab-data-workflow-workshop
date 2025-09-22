@@ -28,52 +28,12 @@ datalad siblings
 git annex enableremote arbutus-s3 || true
 ```
 
-3) Quick single-file speed check (one large TIFF)
-Pick one file from a “full” imagery directory (tif/tsa41full or tif/tsa40full). If you’re unsure which file to pick, use the first entry in the directory listing:
+3) Download files
+
+Observe the command line while the files download to see the download speed.
 
 ```bash
-# Choose a candidate large file (adjust folder if desired)
-FILE=$(git ls-files tif/tsa41full | head -n 1)
-echo "Testing with: $FILE"
-
-# Ensure we download from S3 freshly (drop local copy if present)
-datalad drop -f "$FILE" 2>/dev/null || true
-
-# Time the transfer and compute observed MB/s
-START=$(date +%s)
-datalad get "$FILE"
-END=$(date +%s)
-SIZE=$(stat -c %s "$FILE")
-DUR=$((END-START))
-MBPS=$(awk "BEGIN{printf \"%.2f\", $SIZE/$DUR/1024/1024}")
-echo "Downloaded $(numfmt --to=iec --suffix=B $SIZE) in ${DUR}s → ~${MBPS} MB/s"
-```
-
-Notes
-- git-annex prints per-transfer speeds during the download; the computed MB/s above is an overall average.
-- If your terminal does not show progress lines, you can add -c datalad.log.level=INFO to the datalad command.
-
-4) Multi-file speed demo (optional)
-To observe sustained throughput across multiple large files, fetch an entire directory recursively. Enable a few concurrent jobs to populate several files in parallel.
-
-```bash
-# Example: tsa41full imagery (adjust path to any large subdir you want)
-time datalad -c datalad.runtime.max-annex-jobs=4 get -r tif/tsa41full
-```
-
-5) Verify integrity and remote availability (optional)
-
-```bash
-git annex whereis "$FILE"
-```
-
-6) Free up space when done (optional)
-
-```bash
-# Drop a single file
-datalad drop "$FILE"
-# Or drop a whole directory
-datalad drop -r tif/tsa41full
+datalad get -r .
 ```
 
 Troubleshooting
