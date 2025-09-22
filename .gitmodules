@@ -3,3 +3,7 @@
 	url = https://github.com/UBC-FRESH/cccandies_demo_input.git
 	datalad-id = 54122293-e9e9-442c-83e4-55ddc01501c0
 	datalad-url = https://github.com/UBC-FRESH/cccandies_demo_input.git
+[submodule "demo_dataset"]
+	path = demo_dataset
+	url = ./demo_dataset
+	datalad-id = 4996b3cb-f7c6-4be2-820b-98171c478d0e
