@@ -89,28 +89,40 @@ GIN siblings provide both:
 
 Create the sibling, configure push dependencies, and push.
 
+Choose a unique repo name under your GIN account.
+
 ```bash
-# Choose a unique repo name under your GIN account
-REPO_NAME="demo-dataset-gin"
+REPO_NAME="${GITHUB_REPO_NAME_GIN}"
+```
 
-# Create the GIN sibling (SSH recommended). This creates two siblings: `gin` and `gin-storage`.
-datalad create-sibling-gin -d . --name gin "$REPO_NAME"
+Create the GIN sibling (SSH recommended). This creates two siblings: `gin` and `gin-storage`. Print list of siblings after creating to see what is going on here.
 
-# Verify siblings
+```bash
+datalad create-sibling-gin "$REPO_NAME" -s gin `--access-protocol https`
 datalad siblings
+```
 
-# Push Git history/metadata (annex content will be sent to gin-storage via publish-depends)
+Note that we passed `--access-protocol https` to `create-sibling-gin` to use HTTPS access protocol (defaults to SSH) so we can just use a GIN access token. To use SSH access protocol you have to create an RSA key pair, upload the public half of the key pair to your GIN account, etc. Students often get all tangled up in the process of creatingt and deploying RSA key pairs, so we are skipping all of that for now by forcing DataLad to use the HTTPS protocol for the GIN sibling.
+
+Push Git history/metadata (annex content will be sent to gin-storage via publish-depends). First push creates git-annex branch remotely and obtains annex UUID).
+
+```bash
 datalad push --to gin
 ```
 
-If you prefer HTTPS instead of SSH, pass `--access-protocol https` to `create-sibling-gin`.
+Register `gin-storage` as a common data source in the dataset (i.e., that is available regardless of whether the dataset was directly cloned from GIN or from somewhere else) and push again to update cloud repo metadata.
+
+```bash
+datalad siblings configure -s gin --as-common-datasrc gin-storage
+datalad push --to gin
+```
 
 Now register the subdataset URL in the parent so fresh clones know where to get it, then push the parent.
 
 ```bash
 # Build the canonical SSH URL (adjust if you used HTTPS)
-GIN_USERNAME="<your-gin-username>"
-GIN_URL="git@gin.g-node.org:${GIN_USERNAME}/${REPO_NAME}.git"
+GIN_USERNAME="${GIN_USERNAME}"
+GIN_URL="https://gin.g-node.org/${GIN_USERNAME}/${REPO_NAME}.git"
 
 cd ..
 datalad subdatasets --set-property url "$GIN_URL" demo_dataset
@@ -150,14 +162,9 @@ datalad get outputs/processed.csv
 
 # Grab exact commits and inspect
 V1=$(git log --grep='process data v1' --pretty=%H -n 1)
-V2=$(git log --grep='process data v2' --pretty=%H -n 1)
-echo "V1=$V1"; echo "V2=$V2"
-
+echo "V1=$V1";
 datalad rerun --report "$V1"
-datalad rerun --report "$V2"
-
 datalad diff -f ${V1}^ -t ${V1}
-datalad diff -f ${V2}^ -t ${V2}
 ```
 
 Common commands recap:
