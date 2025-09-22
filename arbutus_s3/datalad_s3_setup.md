@@ -12,8 +12,29 @@ lives on GitHub. This is the recommended pattern for reproducible data.
 ### 0) Switch to main git branch and create a new feature branch
 
 ```bash
+# From the repo root
+git status --porcelain
+
+# If you see untracked files under demo_dataset/, move them aside (safest)
+if [ -d demo_dataset ]; then
+  mv demo_dataset "_demo_dataset_local_$(date +%Y%m%d%H%M%S)"
+  echo "Moved demo_dataset/ aside; continuing…"
+fi
+
+# (Alternative 1) If you prefer to stash untracked stuff instead of moving:
+# git stash push -u -m "pre-Workflow3: move to main"
+
+# (Alternative 2) If you’re sure it’s disposable, delete untracked files:
+# git clean -fd demo_dataset
+
+# Now it’s safe to switch and start the new branch
 git switch main
-git checkout -b feature/git-datalad-s3-workflow
+git pull --ff-only
+git switch -c feature/git-datalad-s3-workflow
+
+# sanity
+git status
+git branch -vv
 ```
 
 ### 1) Initialize DataLad repo as a subdataset and save (anologous to git commit)
