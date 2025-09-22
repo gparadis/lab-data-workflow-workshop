@@ -87,6 +87,13 @@ GIN siblings provide both:
 - A Git remote for history/metadata ("gin").
 - A storage sibling for annexed content ("gin-storage").
 
+```bash
+# Ensure you have an SSH key and it’s added to GIN
+test -f ~/.ssh/id_ed25519.pub || ssh-keygen -t ed25519 -C "$USER@$(hostname)"
+cat ~/.ssh/id_ed25519.pub     # paste at https://gin.g-node.org/user/settings/keys
+ssh -T git@gin.g-node.org     # accept host key; should say "Permission denied" but show your user => OK
+```
+
 Create the sibling, configure push dependencies, and push.
 
 Choose a unique repo name under your GIN account.
@@ -98,7 +105,8 @@ REPO_NAME="${GITHUB_REPO_NAME_GIN}"
 Create the GIN sibling (SSH recommended). This creates two siblings: `gin` and `gin-storage`. Print list of siblings after creating to see what is going on here.
 
 ```bash
-datalad create-sibling-gin "$REPO_NAME" -s gin `--access-protocol https`
+cd demo_dataset
+datalad create-sibling-gin "$REPO_NAME" -s gin --access-protocol ssh
 datalad siblings
 ```
 
@@ -107,13 +115,6 @@ Note that we passed `--access-protocol https` to `create-sibling-gin` to use HTT
 Push Git history/metadata (annex content will be sent to gin-storage via publish-depends). First push creates git-annex branch remotely and obtains annex UUID).
 
 ```bash
-datalad push --to gin
-```
-
-Register `gin-storage` as a common data source in the dataset (i.e., that is available regardless of whether the dataset was directly cloned from GIN or from somewhere else) and push again to update cloud repo metadata.
-
-```bash
-datalad siblings configure -s gin --as-common-datasrc gin-storage
 datalad push --to gin
 ```
 
