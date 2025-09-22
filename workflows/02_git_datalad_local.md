@@ -90,10 +90,9 @@ echo "f,6.0,3.5" >> data/input.csv
 datalad save -m "append new data row to the end of data/input.csv"
 ```
 
-When you are done modifying the dataset, save edits so the tree is clean for the next run and re-run the data processing pipeline (using a different tag than the first run, so we can easily identify them in a later step).
+Re-run the data processing pipeline (using a different tag than the first run, so we can easily identify them in a later step).
 
 ```bash
-datalad save -m "prep for v2: tweak code/input"
 datalad run -m "process data v2" "python3 code/process_data.py --input data/input.csv --out outputs/processed.csv"
 ```
 
@@ -151,6 +150,8 @@ cd demo_dataset
 REPO_NAME=${GITHUB_REPO_NAME_LOCAL}
 GH_URL="https://github.com/${GH_OWNER}/${REPO_NAME}.git"
 
+echo "Creating new DataLad sibling linked to GitHub repo URL: ${GH_URL}"
+
 # Create the sibling correctly for org vs user
 if [ -n "${GITHUB_ORGANIZATION:-}" ]; then
   datalad create-sibling-github -d . --github-organization "$GH_OWNER" --name origin "$REPO_NAME"
@@ -159,18 +160,21 @@ else
 fi
 ```
 
-Now push your new DataLad dataset out to GitHub, and then back up to the parent repo and register
-the subdataset so we can clone from a different location and all the bits and pieces stay linked 
-together and we can restore full copies of this environment in new clones.
+Now push your new DataLad dataset out to GitHub, and then back up to the parent repo, register
+the subdataset (so we can clone from a different location and all the bits and pieces stay linked 
+together and we can restore full copies of this environment in new clones), and finally push update parent
+repo subdataset metadata up to GitHub origin.
 
 ```bash
-# Push Git history (annex content still goes to S3 via publish-depends)
+# Push Git history
 datalad push --to origin
 
 # In the parent repo, register the subdataset URL so fresh clones work
 cd ..
 datalad subdatasets --set-property url "$GH_URL" demo_dataset
 datalad save -m "Register subdataset URL $GH_URL"
+datalset siblings
+datalad push --to origin
 ```
 
 ### 12) Clone into a fresh environment
@@ -187,12 +191,12 @@ git switch feature/git-datalad-local-workflow
 
 # DataLad-native install of subdatasets (no git submodule update needed)
 datalad get -n -r .
-datalad get -r .
 ```
 
 Print a quick list of all `datalad run` commands (you should see both v1 and v2 runs in there).
 
 ```bash
+cd demo_dataset
 # short, readable list (hash, date, subject)
 git log --grep='\[DATALAD RUNCMD\]' --pretty='%h  %ad  %s' --date=short
 ```

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+# set -euo pipefail (crashes VSCode shell sometimes so disabling for now)
 
 read -rp "Full name for Git commits: " NAME
 read -rp "Email for Git commits: " EMAIL

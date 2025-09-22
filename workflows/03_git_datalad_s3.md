@@ -7,7 +7,7 @@
 
 Follow `arbutus_s3/datalad_s3_setup.md` closely. High‑level steps:
 
-1. Export AWS/S3 env vars (`source setup/s3_config.sh` — created from template).
+0. *Skip this if you did this already from README quickstart instructions and still running in the same shell.* Export AWS/S3 env vars and configure  (`source setup/02_datalad_config.sh` and `source setup/03_config_git_user.sh`).
 2. Inside `demo_dataset/`, ensure DataLad is initialized and saved.
 3. Create the S3 special remote (`git annex initremote ...` or `datalad create-sibling-s3`).
 4. `datalad push --to s3-storage`

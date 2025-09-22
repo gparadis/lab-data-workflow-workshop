@@ -3,29 +3,47 @@
 This sets up **S3 as a git‑annex special remote** for file content, while the Git repo
 lives on GitHub. This is the recommended pattern for reproducible data.
 
-## 0) Prereqs
+## Prereqs
 
 - `datalad` and `git‑annex` installed
 - `datalad-next` installed (`pip install datalad-next`)
 - `AWS_*` env vars exported **or** credentials configured via `aws configure`
 
-## 1) Create or clone your dataset
-
-If starting fresh (inside this repository):
+### 0) Switch to main git branch and create a new feature branch
 
 ```bash
-cp -r demo_dataset demo_dataset_datalad_s3
-cd demo_dataset_datalad_s3
-rm output/*
-datalad create --force -c text2git  # initializes DataLad in this directory
+git switch main
+git checkout -b feature/git-datalad-s3-workflow
+```
+
+### 1) Initialize DataLad repo as a subdataset and save (anologous to git commit)
+
+First, we undo git tracking of the `demo_dataset` subdirectory (only applies to this branch) so we 
+track it as a DataLad subdataset of the parent repo instead.
+
+```bash
+git rm -r --cached demo_dataset
+git commit -m "Untrack demo_dataset in parent (retry for subdataset)"
+```
+
+Now that the `demo_dataset` is untracked, we can use the `datalad create` command to initialize it
+as a DataLad dataset.
+
+```bash
+datalad create -d . --force -c text2git demo_dataset
+```
+
+Run a recursive `datalad save` command, which both initializes the `demo_data` subdataset and registers the subdataset in the parent repo.
+
+```bash
+datalad save -r -m "Initialize subdataset with existing content and register in parent"
 ```
 
 ## 2) Generate some fresh output and save the current state
 
 ```bash
+cd demo_dataset
 datalad run -m "process data v1" "python3 code/process_data.py --input data/input.csv --out outputs/processed.csv"
-datalad status
-datalad save -m "Initial dataset state"
 datalad status
 ```
 
@@ -39,8 +57,9 @@ REMOTE="arbutus-s3"
 BUCKET="${S3_BUCKET_NAME}"         # export via setup/s3_config.sh
 ENDPOINT="${S3_ENDPOINT_URL}"      # export via setup/s3_config.sh
 REGION="${AWS_DEFAULT_REGION}"     # export via setup/s3_config.sh
-ORG="${GITHUB_ORGANIZATION}"       # export via setup/s3_config.sh
-REPO="${GITHUB_REPO_NAME_S3}"      # export via setup/s3_config.sh
+
+REPO_NAME="${GITHUB_REPO_NAME_S3}"
+GH_URL="https://github.com/${GH_OWNER}/${REPO_NAME}.git"
 
 # Create an annex special remote using datalad-next (wraps git-annex initremote)
 git annex initremote "$REMOTE" \
@@ -60,7 +79,7 @@ datalad create-sibling-github -d . \
   --github-organization "$ORG" \
   --name origin \
   --publish-depends "$REMOTE" \
-  "$REPO"
+  "$REPO_NAME"
 
 # verify siblings
 datalad siblings
@@ -81,12 +100,11 @@ datalad push --to "$ORIGIN"
 cd ..
 ```
 
-
 ## 5) Add your new DataLad repo back into the workshop parent git repo as a git submodule
 
 ```bash
 # set remote GitHub repo URL property on DataLad subdataset (the same one we just created) 
-datalad subdatasets --set-property url https://github.com/${ORG}/$(REPO).git demo_dataset_datalad_s3
+datalad subdatasets --set-property url $GH_URL demo_dataset
 datalad save -m "Register subdataset GitHub URL for portable clones"
 
 # push the parent repo change
@@ -95,12 +113,12 @@ git push || git push -u origin "$(git rev-parse --abbrev-ref HEAD)"
 
 ## 6) Test on a fresh clone
 
-- Clone the Git repo from GitHub (NOT from S3).
-- Run a git submodule update command to pull 
-- Inside the dataset directory, fetch file content on demand:
+- Clone your forked repo from GitHub (*not* from S3).
+- Run a recursive datalad get command to pull everything down from the cloud (will know to download from the Arbutus S3 bucket if we configured the DataLad special remote correctly). 
+- Inside the parent repo root directory, fetch file content on demand:
 
 ```bash
-datalad get 
+datalad get -n -r .
 ```
 
 If content is available in S3, this will retrieve it via the special remote.
